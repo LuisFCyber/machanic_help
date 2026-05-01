@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoParts Pro | Catálogo de Peças Chevrolet</title>
+    <meta name="description" content="Catálogo completo de peças e compatibilidade para os veículos Chevrolet mais populares.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-gears logo-icon"></i>
+                <h1>AutoParts <span>Pro</span></h1>
+            </div>
+            
+            <div class="sidebar-search">
+                <i class="fa-solid fa-car"></i>
+                <input type="text" id="car-search-input" placeholder="Buscar veículo...">
+            </div>
+
+            <div class="sidebar-menu" id="sidebar-menu">
+                <!-- Injected via JS -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-nav">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Buscar por peça, categoria, código GM ou marca...">
+                    <button id="search-btn" class="search-btn" title="Pesquisar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-user-gear"></i></div>
+                    <span>Oficina Parceira</span>
+                </div>
+            </header>
+
+            <div id="content-area" class="content-area">
+                <!-- Welcome State -->
+                <div id="welcome-state" class="welcome-state">
+                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <h2>Selecione um veículo</h2>
+                    <p>Escolha um modelo na barra lateral para visualizar o catálogo de peças originais e as marcas compatíveis do mercado.</p>
+                </div>
+
+                <!-- Car Detail State (Hidden by default) -->
+                <div id="car-detail-state" class="car-detail-state hidden">
+                    <div class="car-header">
+                        <div class="car-image-container">
+                            <img id="car-image" src="" alt="Carro">
+                            <div class="car-image-overlay"></div>
+                        </div>
+                        <div class="car-info">
+                            <h2 id="car-title">Nome do Carro</h2>
+                            <p id="car-description">Descrição do carro</p>
+                        </div>
+                    </div>
+
+                    <div class="parts-section">
+                        <div class="filters">
+                            <h3>Categorias</h3>
+                            <div id="category-filters" class="category-buttons">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+
+                        <div class="parts-grid" id="parts-grid">
+                            <!-- Injected via JS -->
+                        </div>
+                        
+                        <div id="no-results" class="no-results hidden">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <p>Nenhuma peça encontrada com estes filtros.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
