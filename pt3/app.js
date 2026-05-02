@@ -23,7 +23,7 @@ function init() {
 
 const carSearchInput = document.getElementById('car-search-input');
 
-// Render the sidebar car list grouped by brand
+// Render the sidebar car list grouped by brand and model
 function renderCarList(filterText = '') {
     const sidebarMenu = document.getElementById('sidebar-menu');
     sidebarMenu.innerHTML = '';
@@ -41,7 +41,7 @@ function renderCarList(filterText = '') {
         brandGroup.className = 'brand-group';
         
         const brandLabel = document.createElement('div');
-        brandLabel.className = 'menu-label';
+        brandLabel.className = 'menu-label brand-label';
         
         const isSelectedBrand = brandCars.some(c => c.id === selectedCarId);
         const shouldBeOpen = normalizedFilter !== '' || isSelectedBrand;
@@ -50,29 +50,82 @@ function renderCarList(filterText = '') {
             brandLabel.classList.add('collapsed');
         }
 
-        brandLabel.innerHTML = `<span>${brand}</span> <i class="fa-solid fa-chevron-down"></i>`;
+        brandLabel.innerHTML = `<span><i class="fa-solid fa-industry" style="margin-right: 8px;"></i>${brand} <span style="font-size:10px; color:var(--text-tertiary); margin-left:4px;">(${brandCars.length})</span></span> <i class="fa-solid fa-chevron-down"></i>`;
         
-        const ul = document.createElement('ul');
-        ul.className = `car-list ${shouldBeOpen ? '' : 'collapsed'}`;
+        const brandUl = document.createElement('ul');
+        brandUl.className = `brand-list ${shouldBeOpen ? '' : 'collapsed'}`;
         
         brandLabel.addEventListener('click', () => {
             brandLabel.classList.toggle('collapsed');
-            ul.classList.toggle('collapsed');
+            brandUl.classList.toggle('collapsed');
         });
 
+        // Group cars by model (first word of the name)
+        const modelsMap = new Map();
         brandCars.forEach(car => {
-            const li = document.createElement('li');
-            li.className = `car-item ${selectedCarId === car.id ? 'active' : ''}`;
-            li.innerHTML = `
-                <i class="fa-solid fa-car-side"></i>
-                <span>${car.name}</span>
-            `;
-            li.addEventListener('click', () => selectCar(car.id));
-            ul.appendChild(li);
+            const modelName = car.name.split(' ')[0];
+            if (!modelsMap.has(modelName)) {
+                modelsMap.set(modelName, []);
+            }
+            modelsMap.get(modelName).push(car);
+        });
+
+        const models = Array.from(modelsMap.keys()).sort();
+
+        models.forEach(model => {
+            const modelCars = modelsMap.get(model);
+            
+            const modelGroup = document.createElement('li');
+            modelGroup.className = 'model-group';
+
+            const modelLabel = document.createElement('div');
+            modelLabel.className = 'menu-label model-label';
+            
+            const isSelectedModel = modelCars.some(c => c.id === selectedCarId);
+            const shouldModelBeOpen = normalizedFilter !== '' || isSelectedModel;
+            
+            if (!shouldModelBeOpen) {
+                modelLabel.classList.add('collapsed');
+            }
+
+            modelLabel.innerHTML = `<span><i class="fa-solid fa-car" style="margin-right: 8px;"></i>${model} <span style="font-size:9px; color:var(--text-tertiary); margin-left:4px;">(${modelCars.length})</span></span> <i class="fa-solid fa-chevron-down"></i>`;
+            
+            const modelUl = document.createElement('ul');
+            modelUl.className = `car-list ${shouldModelBeOpen ? '' : 'collapsed'}`;
+            
+            modelLabel.addEventListener('click', () => {
+                modelLabel.classList.toggle('collapsed');
+                modelUl.classList.toggle('collapsed');
+            });
+
+            modelCars.forEach(car => {
+                const li = document.createElement('li');
+                li.className = `car-item ${selectedCarId === car.id ? 'active' : ''}`;
+                
+                // Remove the model prefix from the displayed name if it exists
+                let displayName = car.name;
+                if (displayName.startsWith(model + ' ')) {
+                    displayName = displayName.substring(model.length + 1);
+                }
+                
+                li.innerHTML = `
+                    <i class="fa-solid fa-car-side"></i>
+                    <span>${displayName}</span>
+                `;
+                li.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectCar(car.id);
+                });
+                modelUl.appendChild(li);
+            });
+
+            modelGroup.appendChild(modelLabel);
+            modelGroup.appendChild(modelUl);
+            brandUl.appendChild(modelGroup);
         });
         
         brandGroup.appendChild(brandLabel);
-        brandGroup.appendChild(ul);
+        brandGroup.appendChild(brandUl);
         sidebarMenu.appendChild(brandGroup);
     });
 
@@ -161,9 +214,10 @@ function renderPartsGrid() {
     partsGridEl.classList.remove('hidden');
     noResultsEl.classList.add('hidden');
 
-    filteredParts.forEach(part => {
+    filteredParts.forEach((part, index) => {
         const card = document.createElement('div');
         card.className = 'part-card';
+        card.style.animationDelay = `${index * 0.05}s`;
         
         const compatiblesHTML = part.compatibles.map(comp => `
             <div class="compat-item">
